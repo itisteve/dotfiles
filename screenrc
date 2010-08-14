@@ -1,0 +1,11 @@
+hardstatus on
+hardstatus alwayslastline
+hardstatus string "%{= ck} %-w%{R}[%{k}%n %t%{R}]%{k}%+w %= %c "
+
+caption splitonly
+caption string "%n - %t"
+
+shelltitle ''
+startup_message off
+
+bind ' ' source .screenrc

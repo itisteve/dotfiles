@@ -1,0 +1,15 @@
+class Hash
+  def method_missing(sym)
+    print sym.to_sym
+    print self
+  end
+end
+
+h = {
+  :four => "no",
+  :three => "yes",
+}
+
+h[:three]
+puts h.three
+

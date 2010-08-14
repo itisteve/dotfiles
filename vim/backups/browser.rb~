@@ -1,0 +1,69 @@
+require 'webkit'
+
+# pseudo openstruct behaviour (NOT VERY GOOD DONE DO BETTER TY)
+class Hash
+  def method_missing(sym)
+    return self[sym]
+  end
+end
+
+# Aliases for neatness purposes
+[
+  ["window", "Gtk::Window"],
+  ["vbox",   "Gtk::VBox"],
+  ["hbox",   "Gtk::HBox"],
+  ["eventbox", "Gtk::EventBox"],
+  ["label",   "Gtk::Label"],
+  ["webkit", "Gtk::WebKit::WebView"]
+].each do |newcom,widg|
+  eval "def #{newcom}; return #{widg}.new; end"
+end
+
+#
+# Build and pack the main window
+#
+def build_window
+  # Define how the window looks
+  layout_table = {
+    :win    => window(),
+    :ebox   => eventbox(),
+    :layout => vbox(),
+    :web    => webkit(),
+
+    :sbar   => {
+      :layout => hbox(),
+      :ebox   => eventbox(),
+      :l => {
+        :layout => hbox(),
+        :ebox   => eventbox(),
+        :uri    => label()
+      }
+    },
+  }
+  
+  w = layout_table
+
+  # Assemble it
+  w.ebox.set_child(w.layout)
+  w.win.set_child(w.ebox)
+  w.layout.pack_start(w.web, true, true, 0)
+
+  # Pack the statusbar
+  l = w.sbar.l
+  l.layout.pack_start(l.uri, false, false, 0)
+  l.ebox.set_child(l.layout)
+
+  s = w.sbar
+  s.layout.pack_start(l.ebox, false ,false ,0)
+  s.ebox.set_child(s.layout)
+  w.layout.pack_start(s.ebox, false, false, 0)
+
+  return w
+end
+
+
+# Do the work!
+a = build_window
+a.win.show_all
+a.web.open("http://google.com")
+Gtk.main
